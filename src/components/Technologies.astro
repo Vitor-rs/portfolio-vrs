@@ -1,17 +1,33 @@
 ---
-const technologies = [
-    { name: "Excel", img: "office365.png", level: 9 },
-    { name: "Power BI", img: "Power-Bi.png", level: 7 },
-    { name: "Python", img: "python.png", level: 5 },
-    { name: "SQL", img: "sql-server.png", level: 7.5 },
-    { name: "Java", img: "java.png", level: 6.5 },
-    { name: "Spring Framework", img: "toppng.com-spring-framework-logo-363x363.png", level: 4 },
-    { name: "WordPress", img: "wordpress.png", level: 8 },
-    { name: "Typescript", img: "typescript.png", level: 5.5 },
-    { name: "Markdown", img: "markdown.png", level: 9.5 },
-    { name: "React", img: "reactLogo.png", level: 6 },
-    { name: "Tailwind CSS", img: "tailwind-css-256.png", level: 8.5 }
+interface Technology {
+    name: string;
+    img: string;
+    level: 'Avançado' | 'Intermediário' | 'Básico';
+    percentage: number;
+}
+
+const technologies: Technology[] = [
+    { name: "Excel", img: "office365.png", level: "Avançado", percentage: 90 },
+    { name: "Power BI", img: "Power-Bi.png", level: "Intermediário", percentage: 70 },
+    { name: "Python", img: "python.png", level: "Intermediário", percentage: 60 },
+    { name: "SQL", img: "sql-server.png", level: "Avançado", percentage: 75 },
+    { name: "Java", img: "java.png", level: "Intermediário", percentage: 65 },
+    { name: "Spring Framework", img: "toppng.com-spring-framework-logo-363x363.png", level: "Básico", percentage: 40 },
+    { name: "WordPress", img: "wordpress.png", level: "Avançado", percentage: 80 },
+    { name: "Typescript", img: "typescript.png", level: "Intermediário", percentage: 60 },
+    { name: "Markdown", img: "markdown.png", level: "Avançado", percentage: 95 },
+    { name: "React", img: "reactLogo.png", level: "Intermediário", percentage: 65 },
+    { name: "Tailwind CSS", img: "tailwind-css-256.png", level: "Avançado", percentage: 85 }
 ];
+
+function getLevelColor(level: string): string {
+    switch (level) {
+        case 'Avançado': return 'text-green-500';
+        case 'Intermediário': return 'text-blue-500';
+        case 'Básico': return 'text-yellow-500';
+        default: return 'text-gray-500';
+    }
+}
 ---
 <section id="technologies"
          class="
@@ -23,9 +39,10 @@ const technologies = [
             gap-16
             bg-dark
             py-16
-         ">
-    <h2 class="text-4xl font-bold text-light">Tecnologias</h2>
-    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+         "
+         aria-labelledby="tech-heading">
+    <h2 id="tech-heading" class="text-4xl font-bold text-light">Tecnologias</h2>
+    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" role="list">
         {technologies.map((tech) => (
                 <li class="
         flex
@@ -43,18 +60,23 @@ const technologies = [
         border-opacity-20
         hover:border-opacity-50
       ">
-                    <div class="flex items-center justify-between">
+                    <div class="flex items-center justify-between mb-2">
                         <div class="flex items-center gap-4">
-                            <img src={tech.img} alt={tech.name} class="w-8 h-8" />
-                            <span class="text-xl text-light">{tech.name}</span>
+                            <img src={tech.img} alt={tech.name} class="w-10 h-10 object-contain" />
+                            <span class="text-xl text-light font-medium">{tech.name}</span>
                         </div>
-                        <span class="text-sm text-secondary font-semibold">{tech.level.toFixed(1)}/10</span>
+                        <span class={`text-sm font-semibold px-3 py-1 rounded-full ${getLevelColor(tech.level)} bg-opacity-20 ${tech.level === 'Avançado' ? 'bg-green-500' : tech.level === 'Intermediário' ? 'bg-blue-500' : 'bg-yellow-500'}`}>
+                            {tech.level}
+                        </span>
                     </div>
-                    <div class="w-full bg-light bg-opacity-20 rounded-full h-2.5">
+                    <div class="w-full bg-light bg-opacity-20 rounded-full h-2 overflow-hidden" role="progressbar" aria-valuenow={tech.percentage} aria-valuemin="0" aria-valuemax="100" aria-label={`Nível de proficiência em ${tech.name}: ${tech.level}`}>
                         <div
-                                class="bg-primary h-2.5 rounded-full transition-all duration-1000 ease-out"
+                                class="h-2 rounded-full transition-all duration-1000 ease-out"
+                                class:list={[
+                                    tech.level === 'Avançado' ? 'bg-green-500' : tech.level === 'Intermediário' ? 'bg-blue-500' : 'bg-yellow-500'
+                                ]}
                                 style={`width: 0%`}
-                                data-level={tech.level * 10}
+                                data-level={tech.percentage}
                         ></div>
                     </div>
                 </li>
