@@ -5,18 +5,33 @@ import Card from './Card.astro';
 interface Repo {
   id: string;
   name: string;
+  description: string | null;
   topics: string[];
   html_url: string;
+  stargazers_count: number;
+  language: string | null;
 }
 
 const repos: Repo[] = await fetchRepos();
+// Filter out repos without topics and sort by stars
+const filteredRepos = repos
+  .filter(repo => repo.topics && repo.topics.length > 0)
+  .sort((a, b) => b.stargazers_count - a.stargazers_count)
+  .slice(0, 9); // Show top 9 repos
 ---
 
-<section id="projects" class="mt-16 xl:mt-24 px-8 md:px-12 xl:px-28 flex flex-col gap-16">
-    <h2 class="text-4xl font-bold mb-8">Projetos</h2>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {repos.map((repo: Repo) => (
-                <Card name={repo.name} technologies={repo.topics} url={repo.html_url} />
+<section id="projects" class="mt-16 xl:mt-24 px-8 md:px-12 xl:px-28 flex flex-col gap-16" aria-labelledby="projects-heading">
+    <h2 id="projects-heading" class="text-4xl font-bold mb-8">Projetos</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" role="list">
+        {filteredRepos.map((repo: Repo) => (
+                <Card
+                    name={repo.name}
+                    description={repo.description || 'Sem descrição disponível'}
+                    technologies={repo.topics}
+                    url={repo.html_url}
+                    stars={repo.stargazers_count}
+                    language={repo.language}
+                />
         ))}
     </div>
 </section>
